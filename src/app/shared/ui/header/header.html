@@ -1,0 +1,60 @@
+<header class="h-16 bg-card border-b border-border px-6 flex items-center justify-between sticky top-0 z-10 text-muted-foreground transition-colors duration-300">
+
+  <div class="relative w-full max-w-sm hidden md:block">
+    <lucide-icon name="search"
+      class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"></lucide-icon>
+
+    <input hlmInput [formControl]="searchControl" type="text" placeholder="Search logs via regex..."
+      class="pl-10 w-full bg-slate-50 dark:bg-slate-900 focus:bg-white dark:focus:bg-slate-950 transition-colors" />
+  </div>
+
+  <div class="flex items-center gap-4 ml-auto">
+
+    <button (click)="logService.toggleSimulation()" [class.bg-green-100]="!logService.isSimulating()"
+      [class.text-green-700]="!logService.isSimulating()" [class.bg-red-100]="logService.isSimulating()"
+      [class.text-red-700]="logService.isSimulating()"
+      class="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors border">
+
+      @if (logService.isSimulating()) {
+        <lucide-icon name="square" class="w-4 h-4"></lucide-icon> Stop
+      } @else {
+        <lucide-icon name="play" class="w-4 h-4"></lucide-icon> Simulate
+      }
+    </button>
+
+    <button (click)="themeService.toggleTheme()"
+      class="p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border dark:border-slate-700 text-foreground">
+      @if (themeService.theme() === 'dark') {
+        <lucide-icon name="moon" class="w-5 h-5"></lucide-icon>
+      } @else {
+        <lucide-icon name="sun" class="w-5 h-5 text-yellow-500"></lucide-icon>
+      }
+    </button>
+
+    <div class="h-6 w-px bg-border mx-1"></div>
+
+    @if (authService.currentUser(); as user) {
+      <div class="flex items-center gap-3">
+        
+        <div class="text-right hidden sm:block">
+          <p class="text-sm font-medium text-foreground truncate max-w-[150px]">{{ user.username }}</p>
+          <p class="text-xs text-muted-foreground truncate max-w-[150px]">{{ user.email }}</p>
+        </div>
+
+        <hlm-avatar variant="medium" class="border border-border cursor-pointer hover:ring-2 hover:ring-primary/20 transition-all">
+          <img [src]="user.avatar || 'https://ui-avatars.com/api/?name=' + user.username" 
+               alt="User" hlmAvatarImage />
+          <span hlmAvatarFallback class="bg-primary/10 text-primary">
+            {{ user.username.slice(0, 2).toUpperCase() }}
+          </span>
+        </hlm-avatar>
+
+        <button (click)="logout()" title="Logout"
+          class="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-full transition-colors">
+          <lucide-icon name="log-out" class="w-5 h-5"></lucide-icon>
+        </button>
+
+      </div>
+    }
+  </div>
+</header>

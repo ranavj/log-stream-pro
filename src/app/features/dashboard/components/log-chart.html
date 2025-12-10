@@ -1,0 +1,26 @@
+<div class="grid gap-4 md:grid-cols-2 mt-6">
+  
+  <div class="rounded-xl border bg-card text-card-foreground shadow-sm p-6 flex flex-col items-center">
+    <h3 class="font-semibold tracking-tight mb-4 text-sm">Log Level Distribution</h3>
+    <div class="w-full max-w-[300px] h-[300px]">
+      <canvas baseChart
+        [data]="doughnutChartData()"
+        [type]="doughnutChartType"
+        [options]="doughnutChartOptions">
+      </canvas>
+    </div>
+  </div>
+
+  <div class="rounded-xl border bg-card text-card-foreground shadow-sm p-6 flex flex-col">
+    <h3 class="font-semibold tracking-tight mb-4 text-sm">Traffic by Source (Top 5)</h3>
+    
+    <div class="w-full h-[300px]">
+      <canvas baseChart
+        [data]="barChartData()"
+        [type]="barChartType"
+        [options]="barChartOptions">
+      </canvas>
+    </div>
+  </div>
+
+</div>

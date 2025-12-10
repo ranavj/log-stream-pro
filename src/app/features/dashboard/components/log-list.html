@@ -1,0 +1,72 @@
+<div class="rounded-xl border bg-card text-card-foreground shadow-sm overflow-hidden mt-6 flex flex-col h-[600px]">
+  
+  <div class="p-6 border-b bg-muted/40 shrink-0">
+    <h3 class="font-semibold leading-none tracking-tight">Recent Logs</h3>
+    <p class="text-sm text-muted-foreground mt-2">Latest system activities (Virtual Scrolled).</p>
+  </div>
+
+  <div class="grid grid-cols-12 gap-4 px-6 py-3 bg-muted/20 border-b text-xs font-medium uppercase text-muted-foreground shrink-0">
+    <div class="col-span-3">User</div>
+    <div class="col-span-2">Timestamp</div>
+    <div class="col-span-2">Level</div>
+    <div class="col-span-2">Source</div>
+    <div class="col-span-3">Message</div>
+  </div>
+
+  <cdk-virtual-scroll-viewport itemSize="72" class="custom-viewport h-full w-full bg-card"
+  (scrolledIndexChange)="onScrollIndexChange()">
+    
+    <div *cdkVirtualFor="let log of logs()" 
+         class="grid grid-cols-12 gap-4 px-6 py-4 border-b hover:bg-muted/50 transition-colors cursor-pointer items-center group"
+         (click)="logService.selectLog(log)">
+
+      <div class="col-span-3 flex items-center gap-3 overflow-hidden">
+        <img [src]="log.avatar || 'https://i.pravatar.cc/150'" alt="User" class="h-9 w-9 rounded-full border border-border flex-shrink-0">
+        <div class="flex flex-col overflow-hidden">
+          <span class="text-sm font-medium text-foreground truncate">User {{ log.id.substring(0,4) }}</span>
+          <span class="text-xs text-muted-foreground truncate">{{ log.details?.email || 'user@system.local' }}</span>
+        </div>
+      </div>
+
+      <div class="col-span-2 font-mono text-xs text-muted-foreground">
+        {{ log.timestamp | date:'mediumTime' }}
+      </div>
+
+      <div class="col-span-2">
+        <span [class]="'px-2.5 py-0.5 rounded-full text-[10px] font-bold border ' + getBadgeClass(log.level)">
+          {{ log.level }}
+        </span>
+      </div>
+
+      <div class="col-span-2 text-sm font-medium text-foreground truncate">
+        {{ log.source }}
+      </div>
+
+      <div class="col-span-3 text-sm text-muted-foreground truncate" [title]="log.message">
+        {{ log.message }}
+      </div>
+
+    </div>
+
+    @if (logs().length === 0) {
+      <div class="flex flex-col items-center justify-center h-40 text-muted-foreground">
+        <p>No logs found.</p>
+        <button (click)="logService.toggleSimulation()" class="text-primary text-sm mt-2 hover:underline">
+          Start Simulation?
+        </button>
+      </div>
+    }
+
+    @if (logService.isLoading()) {
+      <div class="p-4 text-center text-sm text-muted-foreground flex justify-center items-center gap-2">
+        <div class="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+        Loading more...
+      </div>
+    }
+
+  </cdk-virtual-scroll-viewport>
+
+  <div class="p-2 border-t bg-muted/10 text-[10px] text-center text-muted-foreground shrink-0">
+    Displaying {{ logs().length }} logs optimized via Angular CDK
+  </div>
+</div>

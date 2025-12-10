@@ -1,0 +1,65 @@
+<div class="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950 p-4">
+  <div class="w-full max-w-md space-y-8 bg-card p-8 rounded-xl border shadow-lg animate-in fade-in zoom-in duration-300">
+    
+    <div class="text-center">
+      <div class="mx-auto h-12 w-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 text-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" x2="3" y1="12" y2="12"/></svg>
+      </div>
+      <h2 class="text-2xl font-bold tracking-tight">Welcome back</h2>
+      <p class="text-sm text-muted-foreground mt-2">Enter your credentials to access your logs</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="space-y-6">
+      
+      <div class="space-y-2">
+        <label for="email" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Email</label>
+        <input 
+          id="email" 
+          type="email" 
+          formControlName="email"
+          class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          placeholder="admin@example.com">
+        
+        @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+          <p class="text-[0.8rem] font-medium text-destructive">Valid email is required</p>
+        }
+      </div>
+
+      <div class="space-y-2">
+        <label for="password" class="text-sm font-medium leading-none">Password</label>
+        <input 
+          id="password" 
+          type="password" 
+          formControlName="password"
+          class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          placeholder="••••••••">
+      </div>
+
+      @if (errorMsg()) {
+        <div class="p-3 rounded-md bg-destructive/10 text-destructive text-sm font-medium text-center border border-destructive/20">
+          {{ errorMsg() }}
+        </div>
+      }
+
+      <button 
+        type="submit" 
+        [disabled]="loginForm.invalid || isLoading()"
+        class="w-full h-10 bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50">
+        
+        @if (isLoading()) {
+          <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+          Signing in...
+        } @else {
+          Sign In
+        }
+      </button>
+
+    </form>
+
+    <div class="text-center text-sm text-muted-foreground">
+      Don't have an account? 
+      <a routerLink="/register" class="font-medium text-primary hover:underline underline-offset-4">Register</a>
+    </div>
+
+  </div>
+</div>

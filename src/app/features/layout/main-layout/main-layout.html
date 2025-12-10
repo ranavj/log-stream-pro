@@ -1,0 +1,15 @@
+<div class="flex h-screen bg-background text-foreground font-sans overflow-hidden">
+    <app-sidebar class="hidden md:block w-64 flex-shrink-0"></app-sidebar>
+
+    <div class="flex-1 flex flex-col h-full w-full">
+
+        <app-header class="flex-shrink-0"></app-header>
+
+        <main class="flex-1 overflow-auto p-4 md:p-6 scroll-smooth">
+
+            <router-outlet></router-outlet>
+
+        </main>
+    </div>
+
+</div>
