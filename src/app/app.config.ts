@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideZonelessChangeDetection, importProvidersFrom, inject } from '@angular/core';
+import { ApplicationConfig, provideZonelessChangeDetection, importProvidersFrom, inject, isDevMode } from '@angular/core';
 import { provideRouter, withComponentInputBinding, withViewTransitions } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async'; // ✅ Best for Performance
 import { LucideAngularModule, LayoutDashboard, AlertCircle, Info, ShieldAlert, LogOut, Search, X, Moon, Play, Square, Sun } from 'lucide-angular';
@@ -14,6 +14,15 @@ import { authInterceptor } from './core/interceptor/auth.interceptor';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { createClient } from 'graphql-ws';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions'; // WS Link
+// Agar Dev mode hai (npm start) -> Localhost
+// Agar Prod mode hai (Vercel) -> Render URL
+const API_URL = isDevMode() 
+  ? 'http://localhost:4000/graphql' 
+  : 'https://log-stream-pro.onrender.com/graphql';
+
+const WS_URL = isDevMode()
+  ? 'ws://localhost:4000/graphql'
+  : 'wss://log-stream-pro.onrender.com/graphql';
 export const appConfig: ApplicationConfig = {
   providers: [
     // 1. ⚡ ZONELESS MODE: App ko super fast banata hai (No Zone.js)
@@ -48,14 +57,14 @@ export const appConfig: ApplicationConfig = {
 
       // 1. HTTP Link (Normal kaam ke liye)
       const http = httpLink.create({ 
-        uri: 'http://localhost:4000/graphql',
+        uri: API_URL, //'http://localhost:4000/graphql',
         withCredentials: true // 👈 YE SABSE IMPORTANT HAI (Cookie bhejne ke liye)
       });
 
       // 2. WebSocket Link (Real-time ke liye)
       const ws = new GraphQLWsLink(
         createClient({
-          url: 'ws://localhost:4000/graphql',
+          url: WS_URL, //'ws://localhost:4000/graphql',
         })
       );
 
