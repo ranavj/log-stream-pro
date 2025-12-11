@@ -318,7 +318,12 @@ async function startServer() {
     cookieParser(),
     // 1. CORS: Frontend ko headers bhejne ki permission do
     cors<cors.CorsRequest>({
-      origin: ['http://localhost:4200', 'https://studio.apollographql.com'],
+      origin: [
+      'http://localhost:4200',       // Angular Dev (ng serve)
+      'http://localhost:80',         // Docker Container
+      'http://localhost',            // Docker Localhost
+      'https://studio.apollographql.com' // Apollo Playground
+      ],
       credentials: true,
       // allowedHeaders: ['Content-Type', 'Authorization', 'X-App-Version', 'X-Source']
     }),
@@ -343,7 +348,7 @@ async function startServer() {
         }
 
         // B. Context return karo (User + Response Object)
-        return { user, res, req };
+        return { user, res, req, pubsub };
       }
     })
   );

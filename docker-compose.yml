@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # 1. DATABASE (MongoDB)
+  mongo:
+    image: mongo:latest
+    container_name: logstream_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  # 2. BACKEND API (Node.js)
+  backend:
+    build: ./server
+    container_name: logstream_api
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      # Docker network mein 'localhost' ki jagah service name 'mongo' use hota hai
+      - MONGODB_URI=mongodb://mongo:27017/logstream
+      - JWT_SECRET=mysecretkey123
+      # Frontend container ka naam ya port 80 allow karein
+      - FRONTEND_URL=http://localhost:80
+    depends_on:
+      - mongo
+
+  # 3. FRONTEND UI (Angular + Nginx)
+  frontend:
+    build: .
+    container_name: logstream_ui
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:
