@@ -134,7 +134,8 @@ const setAuthCookie = (res, token) => {
     res.cookie('token', token, {
         httpOnly: true, // 🛡️ JS isse read nahi kar payega (XSS Safe)
         secure: process.env.NODE_ENV === 'production', // HTTPS par true, Localhost par false
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        // sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        sameSite: 'none', // ✅ Cross-Domain (Vercel -> Render) ke liye zaroori
         maxAge: 1000 * 60 * 60 * 24 * 7 // 7 Days
     });
 };
@@ -331,7 +332,13 @@ function startServer() {
         (0, cookie_parser_1.default)(), 
         // 1. CORS: Frontend ko headers bhejne ki permission do
         (0, cors_1.default)({
-            origin: ['http://localhost:4200', 'https://studio.apollographql.com'],
+            origin: [
+                'http://localhost:4200', // Angular Dev (ng serve)
+                'http://localhost:80', // Docker Container
+                'http://localhost', // Docker Localhost
+                'https://studio.apollographql.com', // Apollo Playground
+                'https://log-stream-pro.vercel.app'
+            ],
             credentials: true,
             // allowedHeaders: ['Content-Type', 'Authorization', 'X-App-Version', 'X-Source']
         }), 
@@ -353,7 +360,7 @@ function startServer() {
                     }
                 }
                 // B. Context return karo (User + Response Object)
-                return { user, res, req };
+                return { user, res, req, pubsub };
             })
         }));
         // Listen on Port

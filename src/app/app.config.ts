@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideZonelessChangeDetection, importProvidersFrom, inject, isDevMode, APP_INITIALIZER } from '@angular/core';
+import { ApplicationConfig, provideZonelessChangeDetection, importProvidersFrom, inject, isDevMode, APP_INITIALIZER, provideAppInitializer } from '@angular/core';
 import { provideRouter, withComponentInputBinding, withViewTransitions } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async'; // ✅ Best for Performance
 import { LucideAngularModule, LayoutDashboard, AlertCircle, Info, ShieldAlert, LogOut, Search, X, Moon, Play, Square, Sun } from 'lucide-angular';
@@ -94,11 +94,9 @@ export const appConfig: ApplicationConfig = {
         cache: new InMemoryCache(),
       };
     }),
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initializeApp,
-      deps: [AuthService],
-      multi: true
-    }
+    provideAppInitializer(() => {
+        const authService = inject(AuthService); // 'deps' ki zaroorat nahi, direct inject karo
+        return firstValueFrom(authService.checkAuth());
+    })
   ]
 };
