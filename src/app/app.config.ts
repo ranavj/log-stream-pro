@@ -20,7 +20,7 @@ import { firstValueFrom } from 'rxjs';
 // Agar Prod mode hai (Vercel) -> Render URL
 const API_URL = isDevMode() 
   ? 'http://localhost:4000/graphql' 
-  : 'https://log-stream-pro.onrender.com/graphql';
+  : '/graphql';
 
 const WS_URL = isDevMode()
   ? 'ws://localhost:4000/graphql'

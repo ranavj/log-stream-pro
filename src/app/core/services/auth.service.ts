@@ -61,7 +61,7 @@ export class AuthService {
   // [UPDATED] Ab ye Observable return karega (Guard ke liye)
   checkAuth(): Observable<boolean> {
     return this.apollo.query({
-      query: ME_QUERY,
+      query: ME_QUERY,maxAge
       fetchPolicy: 'network-only'
     }).pipe(
       map((result: any) => {
