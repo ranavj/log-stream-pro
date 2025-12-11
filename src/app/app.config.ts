@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideZonelessChangeDetection, importProvidersFrom, inject, isDevMode } from '@angular/core';
+import { ApplicationConfig, provideZonelessChangeDetection, importProvidersFrom, inject, isDevMode, APP_INITIALIZER } from '@angular/core';
 import { provideRouter, withComponentInputBinding, withViewTransitions } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async'; // ✅ Best for Performance
 import { LucideAngularModule, LayoutDashboard, AlertCircle, Info, ShieldAlert, LogOut, Search, X, Moon, Play, Square, Sun } from 'lucide-angular';
@@ -14,6 +14,8 @@ import { authInterceptor } from './core/interceptor/auth.interceptor';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { createClient } from 'graphql-ws';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions'; // WS Link
+import { AuthService } from './core/services/auth.service';
+import { firstValueFrom } from 'rxjs';
 // Agar Dev mode hai (npm start) -> Localhost
 // Agar Prod mode hai (Vercel) -> Render URL
 const API_URL = isDevMode() 
@@ -23,6 +25,11 @@ const API_URL = isDevMode()
 const WS_URL = isDevMode()
   ? 'ws://localhost:4000/graphql'
   : 'wss://log-stream-pro.onrender.com/graphql';
+
+  // Factory function: Ye app start hone se pehle chalega
+function initializeApp(authService: AuthService) {
+  return () => firstValueFrom(authService.checkAuth()); // Promise mein convert karke wait karega
+}
 export const appConfig: ApplicationConfig = {
   providers: [
     // 1. ⚡ ZONELESS MODE: App ko super fast banata hai (No Zone.js)
@@ -87,5 +94,11 @@ export const appConfig: ApplicationConfig = {
         cache: new InMemoryCache(),
       };
     }),
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeApp,
+      deps: [AuthService],
+      multi: true
+    }
   ]
 };
