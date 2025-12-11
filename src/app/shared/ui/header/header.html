@@ -7,7 +7,22 @@
     <input hlmInput [formControl]="searchControl" type="text" placeholder="Search logs via regex..."
       class="pl-10 w-full bg-slate-50 dark:bg-slate-900 focus:bg-white dark:focus:bg-slate-950 transition-colors" />
   </div>
+  <div class="relative w-full max-w-sm hidden md:block">
+    </div>
 
+  <div class="hidden md:flex items-center gap-2 ml-4 mr-4">
+    <div class="relative">
+      <lucide-icon name="clock" class="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"></lucide-icon>
+      
+      <select (change)="onDateChange($event)" 
+              class="h-9 pl-9 pr-4 rounded-md border border-input bg-transparent text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 text-foreground appearance-none">
+        <option value="ALL">All Time</option>
+        <option value="1H">Last 1 Hour</option>
+        <option value="24H">Last 24 Hours</option>
+        <option value="7D">Last 7 Days</option>
+      </select>
+    </div>
+  </div>
   <div class="flex items-center gap-4 ml-auto">
 
     <button (click)="logService.toggleSimulation()" [class.bg-green-100]="!logService.isSimulating()"

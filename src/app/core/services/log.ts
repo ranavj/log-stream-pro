@@ -10,8 +10,8 @@ import { AuthService } from './auth.service';
 
 // [UPDATED] Query with Variables
 const GET_LOGS = gql`
-  query GetLogs($offset: Int, $limit: Int, $search: String) {
-    logs(offset: $offset, limit: $limit, search: $search) {
+  query GetLogs($offset: Int, $limit: Int, $search: String, $startDate: String, $endDate: String) {
+    logs(offset: $offset, limit: $limit, search: $search, startDate: $startDate, endDate: $endDate) {
       id, level, message, source, timestamp, avatar, details
     }
   }
@@ -103,6 +103,8 @@ export class LogService implements OnDestroy {
   // [NEW] Subscription Management Array
   // Yahan hum active listeners ko store karenge
   private rtSubscriptions: Subscription[] = [];
+  private startDate: string | null = null;
+  private endDate: string | null = null;
   constructor() {
     this.fetchLogs();
     // 2. [NEW] Auto-Cleanup Effect 🧹
@@ -122,6 +124,29 @@ export class LogService implements OnDestroy {
     });
   }
 
+  // [NEW] Date Filter Action
+  filterByDate(range: '1H' | '24H' | '7D' | 'ALL') {
+    const now = new Date();
+    
+    if (range === 'ALL') {
+      this.startDate = null;
+      this.endDate = null;
+    } else {
+      // End date hamesha 'Abhi' (Now) hogi
+      this.endDate = now.toISOString(); 
+      
+      // Start date calculate karo
+      const start = new Date();
+      if (range === '1H') start.setHours(now.getHours() - 1);
+      if (range === '24H') start.setHours(now.getHours() - 24);
+      if (range === '7D') start.setDate(now.getDate() - 7);
+      
+      this.startDate = start.toISOString();
+    }
+
+    this.fetchLogs(); // Refresh Data
+  }
+
   // ==========================================
   // 1. DATA FETCHING & REALTIME SETUP
   // ==========================================
@@ -137,7 +162,9 @@ export class LogService implements OnDestroy {
       variables: {
         offset: 0,
         limit: this.PAGE_SIZE,
-        search: this.searchTerm // [IMPORTANT] Yahan search text bhejo
+        search: this.searchTerm, // [IMPORTANT] Yahan search text bhejo
+        startDate: this.startDate, 
+        endDate: this.endDate
       },
       fetchPolicy: 'network-only'
     })
@@ -171,7 +198,9 @@ export class LogService implements OnDestroy {
       variables: {
         offset: this.currentOffset,
         limit: this.PAGE_SIZE,
-        search: this.searchTerm // [IMPORTANT] Load more mein bhi search term bhejo
+        search: this.searchTerm, // [IMPORTANT] Load more mein bhi search term bhejo
+        startDate: this.startDate, 
+        endDate: this.endDate
       },
       fetchPolicy: 'network-only'
     }).subscribe({

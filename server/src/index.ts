@@ -60,7 +60,7 @@ const typeDefs = `#graphql
   }
   type Query {
   # [UPDATED] Arguments add kiye: offset aur limit
-    logs(offset: Int, limit: Int, search: String): [Log]
+    logs(offset: Int, limit: Int, search: String, startDate: String, endDate: String): [Log]
   # [NEW] Check karne ke liye ki user logged in hai ya nahi
     me: User
   # [NEW] Stats Query
@@ -101,7 +101,7 @@ const setAuthCookie = (res: any, token: string) => {
 const resolvers = {
   Query: {
     // [UPDATED] Search Logic
-    logs: async (_: any, { offset = 0, limit = 20, search }: { offset: number, limit: number, search?: string }) => {
+    logs: async (_: any, { offset = 0, limit = 20, search, startDate, endDate }: { offset: number, limit: number, search?: string , startDate?: string, endDate?: string}) => {
 
       // 1. Filter Object Banao
       const filter: any = {};
@@ -114,6 +114,14 @@ const resolvers = {
           // Ya Source mein dhundo
           { source: { $regex: search, $options: 'i' } }
         ];
+      }
+
+      // B. [NEW] Date Filter Logic 📅
+      if (startDate && endDate) {
+        filter.timestamp = {
+          $gte: new Date(startDate), // Greater than or Equal (Start)
+          $lte: new Date(endDate)    // Less than or Equal (End)
+        };
       }
 
       // 3. Query Run karo

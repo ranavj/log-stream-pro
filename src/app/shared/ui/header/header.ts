@@ -4,6 +4,7 @@ import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmAvatar, HlmAvatarFallback, HlmAvatarImage } from '@spartan-ng/helm/avatar';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { ClockIcon } from 'lucide-angular';
 import { AuthService } from '../../../core/services/auth.service'; // [NEW] Import
 import { LogService } from '../../../core/services/log';
 import { Theme } from '../../../core/services/theme';
@@ -37,6 +38,10 @@ export class Header {
     });
   }
 
+  onDateChange(event: any) {
+    const value = event.target.value;
+    this.logService.filterByDate(value);
+  }
   // [NEW] Logout Method
   logout() {
     this.authService.logout();
