@@ -92,7 +92,8 @@ const setAuthCookie = (res: any, token: string) => {
   res.cookie('token', token, {
     httpOnly: true,  // 🛡️ JS isse read nahi kar payega (XSS Safe)
     secure: process.env.NODE_ENV === 'production', // HTTPS par true, Localhost par false
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    // sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    sameSite: 'none',    // ✅ Cross-Domain (Vercel -> Render) ke liye zaroori
     maxAge: 1000 * 60 * 60 * 24 * 7 // 7 Days
   });
 };
@@ -322,7 +323,8 @@ async function startServer() {
       'http://localhost:4200',       // Angular Dev (ng serve)
       'http://localhost:80',         // Docker Container
       'http://localhost',            // Docker Localhost
-      'https://studio.apollographql.com' // Apollo Playground
+      'https://studio.apollographql.com' ,// Apollo Playground
+      'https://log-stream-pro.vercel.app'
       ],
       credentials: true,
       // allowedHeaders: ['Content-Type', 'Authorization', 'X-App-Version', 'X-Source']
